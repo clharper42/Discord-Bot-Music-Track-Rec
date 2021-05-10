@@ -14,12 +14,15 @@ bot.remove_command('help')
 
 s = ", "
 
+usablegenres = [] # The genres you want to see in getartist
+
 @bot.command()
 async def help(ctx):
   embed=discord.Embed(title="Help", color=0xae00ff)
   embed.add_field(name="goodbot", value="Praise the bot", inline=False)
   embed.add_field(name="badbot", value="Tell the bot off", inline=False)
   embed.add_field(name="genres", value="Display usable genres", inline=False)
+  embed.add_field(name="getartist", value="Gives three tracks from random artist", inline=False)
   embed.add_field(name="getrecartists", value="Gives a track recommendation based on given artist(s)\n - Multiple artist searches are seprated like so \"Nirvana, U2\"\n - Single artist searches with spaces in the name are done like so \"Led Zeppelin\"", inline=False)
   embed.add_field(name="getrecgenres", value="Gives a track recommendation based on given genre(s)\n - Multiple genre searches are seprated like so \"emo, ska\"", inline=False)
   embed.add_field(name="getrecag", value="Gives a track recommendation based on given artist(s) and genre(s)\n - Single searches are done like so U2 ska\n - Multiple searches are done like so \"Nirvana, U2\" \"emo, ska\"", inline=True)
@@ -94,6 +97,26 @@ async def getrecag(ctx, artists, genre):
         await channel.send("I could not find any tracks :sob:")
     except Exception:
      await channel.send("I have failed your request most likely because I am dumb bot")
+
+@bot.command()
+async def getartist(ctx):
+  channel = bot.get_channel('CHANNEL_ID')
+  while True:
+    try:
+      artist = sp.artist(choice(sp.search(choice(usablegenres),limit=50,offset=randrange(951),type="track",market="US")['tracks']['items'])['artists'][0]['id'])
+      tracks = sp.artist_top_tracks(artist['id'],country="US")
+
+      embed=discord.Embed(title="Artist", color=0xff0000)
+      embed.add_field(name="Name:", value=artist['name'], inline=False)
+      embed.add_field(name="Track", value=tracks['tracks'][0]['external_urls']['spotify'], inline=True)
+      embed.add_field(name="Track", value=tracks['tracks'][1]['external_urls']['spotify'], inline=True)
+      embed.add_field(name="Track", value=tracks['tracks'][2]['external_urls']['spotify'], inline=True)
+      embed.set_image(url=artist['images'][1]['url'])
+      await channel.send(embed=embed)
+      return
+    except Exception:
+      time.sleep(.5)
+      continue
 
 def checkgen(genres):
   gen = []
