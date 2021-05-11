@@ -103,18 +103,21 @@ async def getartist(ctx):
   channel = bot.get_channel('CHANNEL_ID')
   while True:
     try:
-      artist = sp.artist(choice(sp.search(choice(usablegenres),limit=50,offset=randrange(951),type="track",market="US")['tracks']['items'])['artists'][0]['id'])
+      artist = sp.artist(choice(sp.search(choice(dailygens),limit=50,offset=randrange(951),type="track",market="US")['tracks']['items'])['artists'][0]['id'])
       tracks = sp.artist_top_tracks(artist['id'],country="US")
+      artgenres = ", ".join(list(artist['genres']))
 
-      embed=discord.Embed(title="Artist", color=0xff0000)
+      embed=discord.Embed(title=thetitle, color=0x00fbff)
       embed.add_field(name="Name:", value=artist['name'], inline=False)
+      embed.add_field(name="Genres:", value=artgenres, inline=False)
       embed.add_field(name="Track", value=tracks['tracks'][0]['external_urls']['spotify'], inline=True)
       embed.add_field(name="Track", value=tracks['tracks'][1]['external_urls']['spotify'], inline=True)
       embed.add_field(name="Track", value=tracks['tracks'][2]['external_urls']['spotify'], inline=True)
       embed.set_image(url=artist['images'][1]['url'])
       await channel.send(embed=embed)
       return
-    except Exception:
+    except Exception as e:
+      print(str(e))
       time.sleep(.5)
       continue
 
