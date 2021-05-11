@@ -100,26 +100,37 @@ async def getrecag(ctx, artists, genre):
 
 @bot.command()
 async def getartist(ctx):
-  channel = bot.get_channel('CHANNEL_ID')
+  await bot.wait_until_ready()
+  channel = bot.get_channel('CHANNEL_ID') # change back
   while True:
-    try:
-      artist = sp.artist(choice(sp.search(choice(dailygens),limit=50,offset=randrange(951),type="track",market="US")['tracks']['items'])['artists'][0]['id'])
-      tracks = sp.artist_top_tracks(artist['id'],country="US")
-      artgenres = ", ".join(list(artist['genres']))
+    genre = choice(usablegenres)
+    genre = genre.replace("-"," ")
+    if " " in genre:
+      genre = '"' + genre + '"'
 
-      embed=discord.Embed(title=thetitle, color=0x00fbff)
-      embed.add_field(name="Name:", value=artist['name'], inline=False)
-      embed.add_field(name="Genres:", value=artgenres, inline=False)
-      embed.add_field(name="Track", value=tracks['tracks'][0]['external_urls']['spotify'], inline=True)
-      embed.add_field(name="Track", value=tracks['tracks'][1]['external_urls']['spotify'], inline=True)
-      embed.add_field(name="Track", value=tracks['tracks'][2]['external_urls']['spotify'], inline=True)
-      embed.set_image(url=artist['images'][1]['url'])
-      await channel.send(embed=embed)
-      return
-    except Exception as e:
-      print(str(e))
-      time.sleep(.5)
-      continue
+    total = sp.search('genre:' + genre,limit=50,offset=0,type="artist",market="US")['artists']['total']
+    if total != 0:
+      pages = math.ceil(total/50)
+      if(pages > 952):
+        pages = 951
+      try:
+        artist = choice(sp.search('genre:' + genre,limit=50,offset=randrange(pages),type="artist",market="US")['artists']['items'])
+        tracks = sp.artist_top_tracks(artist['id'],country="US")
+        artgenres = ', '.join(list(artist['genres']))
+
+        embed=discord.Embed(title=thetitle, color=0x00fbff)
+        embed.add_field(name="Name:", value=artist['name'], inline=False)
+        embed.add_field(name="Genres:", value=artgenres, inline=False)
+        embed.add_field(name="Track", value=tracks['tracks'][0]['external_urls']['spotify'], inline=True)
+        embed.add_field(name="Track", value=tracks['tracks'][1]['external_urls']['spotify'], inline=True)
+        embed.add_field(name="Track", value=tracks['tracks'][2]['external_urls']['spotify'], inline=True)
+        embed.set_image(url=artist['images'][1]['url'])
+        await channel.send(embed=embed)
+        return
+      except Exception as e:
+        print(str(e))
+        time.sleep(.5)
+        continue
 
 def checkgen(genres):
   gen = []
