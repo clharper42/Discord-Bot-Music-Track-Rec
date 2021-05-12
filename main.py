@@ -22,7 +22,8 @@ async def help(ctx):
   embed.add_field(name="goodbot", value="Praise the bot", inline=False)
   embed.add_field(name="badbot", value="Tell the bot off", inline=False)
   embed.add_field(name="genres", value="Display usable genres", inline=False)
-  embed.add_field(name="getartist", value="Gives three tracks from random artist", inline=False)
+  embed.add_field(name="getartistran", value="Gives three tracks from random artist", inline=False)
+  embed.add_field(name="getartistgenre", value="Gives three tracks from random artist based on given genre\n - Multiword genres are done line so \"skate punk\"", inline=False)
   embed.add_field(name="getrecartists", value="Gives a track recommendation based on given artist(s)\n - Multiple artist searches are seprated like so \"Nirvana, U2\"\n - Single artist searches with spaces in the name are done like so \"Led Zeppelin\"", inline=False)
   embed.add_field(name="getrecgenres", value="Gives a track recommendation based on given genre(s)\n - Multiple genre searches are seprated like so \"emo, ska\"", inline=False)
   embed.add_field(name="getrecag", value="Gives a track recommendation based on given artist(s) and genre(s)\n - Single searches are done like so U2 ska\n - Multiple searches are done like so \"Nirvana, U2\" \"emo, ska\"", inline=True)
@@ -99,9 +100,9 @@ async def getrecag(ctx, artists, genre):
      await channel.send("I have failed your request most likely because I am dumb bot")
 
 @bot.command()
-async def getartist(ctx):
+async def getartistran(ctx):
   await bot.wait_until_ready()
-  channel = bot.get_channel('CHANNEL_ID') # change back
+  channel = bot.get_channel('CHANNEL_ID')
   while True:
     genre = choice(usablegenres)
     genre = genre.replace("-"," ")
@@ -131,7 +132,48 @@ async def getartist(ctx):
         print(str(e))
         time.sleep(.5)
         continue
+        
+@bot.command()
+async def getartistgenre(ctx, genre):
+  genre = genre.replace("-"," ")
+  if " " in genre:
+    genre = '"' + genre + '"'
+  
+  channel = bot.get_channel('CHANNEL_ID')
 
+  total = 0
+  try:
+    total = sp.search('genre:' + genre,limit=50,offset=0,type="artist",market="US")['artists']['total']
+  except:
+    await channel.send("I have failed your request when searching most likely because I am dumb bot")
+    return
+
+  if total != 0:
+    pages = math.ceil(total/50)
+    if(pages > 952):
+      pages = 951
+    try:
+      artist = choice(sp.search('genre:' + genre,limit=50,offset=randrange(pages),type="artist",market="US")['artists']['items'])
+      tracks = sp.artist_top_tracks(artist['id'],country="US")
+      artgenres = ', '.join(list(artist['genres']))
+
+      embed=discord.Embed(title="Artist", color=0x00fbff)
+      embed.add_field(name="Name:", value=artist['name'], inline=False)
+      embed.add_field(name="Genres:", value=artgenres, inline=False)
+      embed.add_field(name="Track", value=tracks['tracks'][0]['external_urls']['spotify'], inline=True)
+      if(len(tracks['tracks']) >= 3):
+        embed.add_field(name="Track", value=tracks['tracks'][1]['external_urls']['spotify'], inline=True)
+        embed.add_field(name="Track", value=tracks['tracks'][2]['external_urls']['spotify'], inline=True)
+      if(len(artist['images']) != 0):
+        embed.set_image(url=artist['images'][1]['url'])
+      await channel.send(embed=embed)
+      return
+    except:
+      await channel.send("I have failed your request becuase I can't make a simple calculation due to being a dumb bot")
+      return
+        
+  await channel.send("I have failed your request because the genre did not return anything")
+             
 def checkgen(genres):
   gen = []
   cmp = sp.recommendation_genre_seeds()['genres']
