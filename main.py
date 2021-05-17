@@ -21,7 +21,7 @@ async def help(ctx):
   embed=discord.Embed(title="Help", color=0xae00ff)
   embed.add_field(name="goodbot", value="Praise the bot", inline=False)
   embed.add_field(name="badbot", value="Tell the bot off", inline=False)
-  embed.add_field(name="genres", value="Display usable genres", inline=False)
+  embed.add_field(name="genres", value="Display usable genres for recommendations", inline=False)
   embed.add_field(name="getartistran", value="Gives three tracks from random artist", inline=False)
   embed.add_field(name="getartistgenre", value="Gives three tracks from random artist based on given genre\n - Multiword genres are done line so \"skate punk\"", inline=False)
   embed.add_field(name="getrecartists", value="Gives a track recommendation based on given artist(s)\n - Multiple artist searches are seprated like so \"Nirvana, U2\"\n - Single artist searches with spaces in the name are done like so \"Led Zeppelin\"", inline=False)
