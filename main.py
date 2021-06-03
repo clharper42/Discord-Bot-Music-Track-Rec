@@ -3,7 +3,7 @@ from discord.ext import commands
 import spotipy
 import time
 import os
-from random import choice
+from random import cho
 from spotipy.oauth2 import SpotifyClientCredentials
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=os.getenv('CLIENTID'),
@@ -73,7 +73,7 @@ async def getrecgenres(ctx, genres):
       else:
         await channel.send("I could not find any tracks :sob:")
     except Exception:
-     await channel.send("I have failed your request most likely because I am dumb bot")
+     await channel.send("I have failed your request most likely because I am a dumb bot")
   else:
     await channel.send("You did not give me any valid genres and thus I have failed my job :tired_face:")
 
@@ -97,7 +97,7 @@ async def getrecag(ctx, artists, genre):
       else:
         await channel.send("I could not find any tracks :sob:")
     except Exception:
-     await channel.send("I have failed your request most likely because I am dumb bot")
+     await channel.send("I have failed your request most likely because I am a dumb bot")
 
 @bot.command()
 async def getartistran(ctx):
@@ -153,7 +153,7 @@ async def getartistsearch(thetype, tosearch):
     try:
       total = sp.search(thetype + tosearch,limit=50,offset=0,type="artist",market="US")['artists']['total']
     except:
-      await channel.send("I have failed your request when searching most likely because I am dumb bot")
+      await channel.send("I have failed your request when searching most likely because I am a dumb bot")
       return
 
   pages = 0
