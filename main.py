@@ -89,7 +89,7 @@ async def getrecgenres(ctx, genres):
 @slash.slash(name="getrecag",
              description="Track recs based on given artist(s) and genre(s). Multi searches are done like \"Cake, U2\" \"emo, ska\"",
              guild_ids = ['SERVER IDS HERE'])
-async def getrecag(ctx, artists, genre):
+async def getrecag(ctx, artists, genres):
   ids = getartids(artists.split(", "))
   gens = checkgen(genre.split(", "))
   if(len(ids) == 0 and len(gens) == 0):
