@@ -151,7 +151,7 @@ async def getartistgenre(ctx, genre):
   await getartistsearch('genre:',genre)
 
 @slash.slash(name="getartist",
-             description="Three tracks from given arist. Multiword names are done line so \"foo fighters\"",
+             description="Three tracks from given arist. Multiword names are done like so \"foo fighters\"",
              guild_ids = ['SERVER IDS HERE'])
 async def getartist(ctx, artist):
   await getartistsearch('artist:',artist)
