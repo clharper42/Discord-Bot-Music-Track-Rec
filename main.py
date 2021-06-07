@@ -186,7 +186,8 @@ async def getartistsearch(thetype, tosearch):
 
     embed=discord.Embed(title="Artist", color=0x00fbff)
     embed.add_field(name="Name:", value=artist['name'], inline=False)
-    embed.add_field(name="Genres:", value=artgenres, inline=False)
+    if(len(artist['genres']) != 0):
+      embed.add_field(name="Genres:", value=artgenres, inline=False)
     embed.add_field(name="Track", value=tracks['tracks'][0]['external_urls']['spotify'], inline=True)
     if(len(tracks['tracks']) >= 3):
       embed.add_field(name="Track", value=tracks['tracks'][1]['external_urls']['spotify'], inline=True)
